@@ -438,4 +438,18 @@
           label.textContent = 'دارک';
           toggle.setAttribute('aria-pressed','true');
         } else {
-          body.classList.remove('dark
+          body.classList.remove('dark'); body.classList.add('light');
+          localStorage.setItem('pk_theme','light');
+          label.textContent = 'سفید';
+          toggle.setAttribute('aria-pressed','false');
+        }
+      });
+
+      // small UX: if user clicks store photo, open maps (already anchor-wrapped) - analytics hook example (no external calls)
+      document.querySelectorAll('a[target="_blank"]').forEach(a=>{
+        a.addEventListener('click', ()=> { /* placeholder for analytics event if desired */ });
+      });
+    })();
+  </script>
+</body>
+</html>
