@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>سبد خرید — پارس خزر شعبه طوبی</title>
+  <meta name="description" content="صفحه سبد خرید — مشاهده، ویرایش و تکمیل خرید.">
+  <link rel="icon" href="photo1.jpg">
+  <style>
+    :root{--accent1:#ff2d95;--accent2:#6f3cff;--bg-light:#fff;--text-light:#111;--muted:#7c7280;--card-shadow:0 12px 40px rgba(16,8,32,0.06);--maxw:1000px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,"Noto Sans","IRANSans",sans-serif;background:var(--bg-light);color:var(--text-light);padding:20px;line-height:1.45}
+    body.dark{background:#0b0710;color:#efe9f6}
+    .container{max-width:var(--maxw);margin:0 auto}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand img{width:64px;height:64px;border-radius:10px;object-fit:cover}
+    .brand h1{font-size:18px}
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{padding:10px 14px;border-radius:12px;border:0;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+    .theme-toggle{padding:8px 10px;border-radius:999px}
+
+    main{display:grid;grid-template-columns:1fr 340px;gap:18px}
+    @media (max-width:980px){main{grid-template-columns:1fr} .summary{order:2}}
+
+    /* Cart list */
+    .cart-list{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);padding:14px;border-radius:12px;border:1px solid rgba(0,0,0,0.04);box-shadow:var(--card-shadow)}
+    .cart-item{display:flex;gap:12px;align-items:center;padding:12px 8px;border-radius:10px;border-bottom:1px dashed rgba(0,0,0,0.04)}
+    .cart-item:last-child{border-bottom:none}
+    .thumb{width:110px;height:88px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,var(--accent1),var(--accent2));flex-shrink:0}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .item-meta{flex:1;display:flex;flex-direction:column;gap:6px}
+    .item-meta .title{font-weight:800}
+    .meta-small{color:var(--muted);font-size:13px}
+
+    .qty-controls{display:flex;align-items:center;gap:8px}
+    .qty-controls input{width:64px;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);text-align:center}
+    .remove-btn{background:transparent;color:var(--muted);border:0;cursor:pointer}
+
+    /* summary */
+    .summary{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);padding:18px;border-radius:12px;border:1px solid rgba(0,0,0,0.04);box-shadow:var(--card-shadow);height:max-content}
+    .summary h3{margin-bottom:10px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+    .total{font-weight:900;font-size:20px;color:var(--accent2)}
+
+    .checkout{display:block;margin-top:12px;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));color:#fff;font-weight:900;text-align:center;border:0;cursor:pointer}
+
+    /* empty */
+    .empty{padding:60px;text-align:center;color:var(--muted);border-radius:12px}
+
+    /* notice modal */
+    .notice-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:120}
+    .notice{background:#fff;padding:20px;border-radius:12px;max-width:680px;width:100%;box-shadow:0 30px 90px rgba(0,0,0,0.6)}
+    body.dark .notice{background:#0f0b14;color:#efe9f6}
+    .notice h4{margin-bottom:8px}
+    .notice p{color:var(--muted)}
+    .notice-actions{display:flex;gap:10px;margin-top:12px;justify-content:flex-end}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <a href="index.html"><img src="photo1.jpg" alt="پارس خزر"></a>
+        <div>
+          <h1>سبد خرید — پارس خزر شعبه طوبی</h1>
+          <p class="meta-small">بررسی و تکمیل سفارش</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <a href="shop.html" class="btn btn-ghost">بازگشت به فروشگاه</a>
+        <button id="themeToggle" class="theme-toggle btn-ghost">تم: <span id="themeLabel">سفید</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="cart-list" id="cartList">
+        <!-- items injected here -->
+      </section>
+
+      <aside class="summary" id="summary">
+        <h3>جمع سفارش</h3>
+        <div class="row"><div>جمع محصولات</div><div id="subTotal">0 تومان</div></div>
+        <div class="row"><div>هزینه ارسال</div><div id="shipping">رایگان</div></div>
+        <div class="row"><div class="total">مبلغ قابل پرداخت</div><div class="total" id="grandTotal">0 تومان</div></div>
+        <button id="checkoutBtn" class="checkout">تکمیل خرید</button>
+      </aside>
+
+    </main>
+
+    <div style="margin-top:18px;color:var(--muted)">در صورت نیاز می‌توانید با پشتیبانی تماس بگیرید: <a href="tel:+982146056873">021-46056873</a> — <a href="tel:+989124039690">0912-403-9690</a></div>
+  </div>
+
+  <!-- notice modal -->
+  <div id="noticeBackdrop" class="notice-backdrop" role="dialog" aria-hidden="true">
+    <div class="notice">
+      <h4>سفارش در حال آماده‌سازی</h4>
+      <p>اقلام شما در حال آماده‌سازی هستند. لطفاً با شماره تلفن فروشگاه تماس بگیرید تا برای خرید حضوری یا ارسال به آدرس شما راهنمایی شوید.</p>
+      <p><strong>تلفن پشتیبانی و ثبت سفارش:</strong> 021-46056873 — 0912-403-9690</p>
+      <div class="notice-actions">
+        <button id="noticeCall" class="btn">تماس با فروشگاه</button>
+        <button id="noticeClose" class="btn btn-ghost">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // cart key same as shop page
+    const CART_KEY = 'pk_cart';
+    const PRODUCTS_JSON = 'shop.json';
+    let products = [];
+
+    const $ = s => document.querySelector(s);
+
+    function readCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)||'[]') }catch(e){ return []; } }
+    function writeCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+
+    function formatPrice(n){ return Number(n).toLocaleString('fa-IR') + ' تومان'; }
+
+    async function loadProducts(){
+      try{
+        const res = await fetch(PRODUCTS_JSON, {cache:'no-cache'});
+        if(!res.ok) throw new Error('no shop.json');
+        const data = await res.json(); products = data.products || [];
+      } catch(e){ console.warn('cannot load shop.json, using sample', e); products = sampleProducts(); }
+    }
+
+    function sampleProducts(){ return [
+      { id:'P1001', sku:'P1001', name:'میکسربرقی پارس خزر مدل A1', price:1850000, image:'prod1.jpg', stock:12 },
+      { id:'P1002', sku:'P1002', name:'چای‌ساز پارس خزر مدل T7', price:1290000, image:'prod2.jpg', stock:5 }
+    ]; }
+
+    function findProduct(id){ return products.find(p => String(p.id)===String(id) || String(p.sku)===String(id)); }
+
+    function renderCart(){
+      const cart = readCart();
+      const list = $('#cartList'); list.innerHTML = '';
+      if(!cart.length){ list.innerHTML = '<div class="empty">سبد خرید شما خالی است — به <a href="shop.html">فروشگاه</a> بروید و محصول اضافه کنید.</div>'; $('#summary').style.display='none'; return; }
+      $('#summary').style.display='block';
+
+      let subtotal = 0;
+      cart.forEach(item => {
+        const p = findProduct(item.id) || { name: 'محصول حذف‌شده', price:0, image:'prod-placeholder.jpg', sku:item.id };
+        const qty = item.qty || 1;
+        const line = p.price * qty;
+        subtotal += line;
+
+        const div = document.createElement('div'); div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="thumb"><img src="${p.image}" alt="${p.name}"></div>
+          <div class="item-meta">
+            <div class="title">${p.name}</div>
+            <div class="meta-small">کد: ${p.sku || p.id}</div>
+            <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+              <div class="qty-controls">
+                <button class="btn qty-minus">−</button>
+                <input class="qty-input" type="number" min="1" value="${qty}">
+                <button class="btn qty-plus">+</button>
+              </div>
+              <div style="margin-left:auto;text-align:left">
+                <div class="meta-small">قیمت واحد</div>
+                <div class="price">${formatPrice(p.price)}</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <div class="meta-small">مجموع</div>
+            <div class="price">${formatPrice(line)}</div>
+            <button class="remove-btn" title="حذف">حذف</button>
+          </div>
+        `;
+
+        // handlers
+        div.querySelector('.qty-plus').addEventListener('click', ()=>{
+          updateQty(item.id, (Number(div.querySelector('.qty-input').value)||1) + 1);
+        });
+        div.querySelector('.qty-minus').addEventListener('click', ()=>{
+          const v = Math.max(1, (Number(div.querySelector('.qty-input').value)||1) - 1);
+          updateQty(item.id, v);
+        });
+        div.querySelector('.qty-input').addEventListener('change', (e)=>{
+          const v = Math.max(1, Number(e.target.value)||1); updateQty(item.id, v);
+        });
+        div.querySelector('.remove-btn').addEventListener('click', ()=>{ removeItem(item.id); });
+
+        list.appendChild(div);
+      });
+
+      $('#subTotal').textContent = formatPrice(subtotal);
+      $('#grandTotal').textContent = formatPrice(subtotal); // shipping free
+    }
+
+    function updateQty(id, qty){ const cart = readCart(); const idx = cart.findIndex(i=>String(i.id)===String(id)); if(idx===-1) return; cart[idx].qty = qty; writeCart(cart); renderCart(); }
+    function removeItem(id){ let cart = readCart(); cart = cart.filter(i=>String(i.id)!==String(id)); writeCart(cart); renderCart(); }
+
+    // checkout behavior
+    function onCheckout(){ $('#noticeBackdrop').style.display='flex'; $('#noticeBackdrop').setAttribute('aria-hidden','false'); }
+    function closeNotice(){ $('#noticeBackdrop').style.display='none'; $('#noticeBackdrop').setAttribute('aria-hidden','true'); }
+
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      // theme init
+      const themeStored = localStorage.getItem('pk_theme'); if(themeStored==='dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
+      $('#themeToggle').addEventListener('click', ()=>{ document.body.classList.toggle('dark'); localStorage.setItem('pk_theme', document.body.classList.contains('dark')?'dark':'light'); $('#themeLabel').textContent = document.body.classList.contains('dark')? 'دارک' : 'سفید'; });
+
+      // load products then render
+      await loadProducts();
+      renderCart();
+
+      $('#checkoutBtn').addEventListener('click', ()=>{
+        onCheckout();
+      });
+
+      $('#noticeClose').addEventListener('click', closeNotice);
+      $('#noticeCall').addEventListener('click', ()=>{ window.location.href = 'tel:+982146056873'; });
+    });
+
+  </script>
+</body>
+</html>
